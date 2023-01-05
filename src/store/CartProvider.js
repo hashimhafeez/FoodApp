@@ -7,6 +7,7 @@ const defaultCartState = {
   totalAmount: 0,
 };
 const cartReducer = (cartState, action) => {
+  // Add Item Logic
   if (action.type === "Add") {
     let updatedTotalAmount =
       cartState.totalAmount + action.item.price * action.item.amount;
@@ -39,6 +40,35 @@ const cartReducer = (cartState, action) => {
       totalAmount: updatedTotalAmount,
     };
   }
+  //// Remove Item Logic //////
+
+  if (action.type === "Remove") {
+    console.log("cartState.item", cartState.item);
+    const existingCartItemIndex = cartState.item.findIndex(
+      (item) => item.id === action.id
+    );
+    // console.log("existingCartItemIndex", existingCartItemIndex);
+
+    const exisitingItem = cartState.item[existingCartItemIndex];
+    console.log("exisitingItem", exisitingItem);
+
+    let updatedTotalAmount = cartState.totalAmount - exisitingItem.price;
+    // console.log("updatedTotalAmount", updatedTotalAmount);
+
+    let updatedItems;
+    if (exisitingItem) {
+      const updatedItem = {
+        ...exisitingItem,
+        amount: exisitingItem.amount - 1,
+      };
+      updatedItems = [...cartState.item];
+      updatedItems[existingCartItemIndex] = updatedItem;
+    }
+    return {
+      item: updatedItems,
+      totalAmount: updatedTotalAmount,
+    };
+  }
   return defaultCartState;
 };
 
@@ -47,7 +77,9 @@ function CartProvider(props) {
     dispatchCartAction({ type: "Add", item: item });
   };
 
-  const removeItemToCartHandler = (item) => {};
+  const removeItemToCartHandler = (id) => {
+    dispatchCartAction({ type: "Remove", id: id });
+  };
 
   const [cartState, dispatchCartAction] = useReducer(
     cartReducer,

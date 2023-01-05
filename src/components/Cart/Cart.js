@@ -5,14 +5,26 @@ import { useContext } from "react";
 import CartContext from "../../store/cart-context";
 import CartItem from "./CartItem";
 
+function cartReducer(state, action) {
+  if (action.type === "id") {
+    return {
+      age: state.age + 1,
+    };
+  }
+}
+
 function Cart(props) {
   const data = React.useContext(CartContext);
   const totalAmount = `$${data.totalAmount.toFixed(2)}`;
   const hasItems = data.items.length > 0;
 
-  const cartItemRemoveHandler = (id) => {};
+  const cartItemRemoveHandler = (id) => {
+    return data.removeItem(id);
+  };
 
-  const cartItemAddHandler = (item) => {};
+  const cartItemAddHandler = (item) => {
+    return data.addItem({ ...item, amount: 1 });
+  };
 
   const CartItems = (
     <ul className={classes["cart-items"]}>
